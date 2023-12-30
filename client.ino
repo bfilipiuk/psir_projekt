@@ -9,6 +9,66 @@ unsigned int localPort = 54321;
 
 EthernetUDP Udp;
 
+void waitForHello() {
+  while (true) {
+    int packetSize = Udp.parsePacket();
+    if (packetSize) {
+      char packetBuffer[UDP_TX_PACKET_MAX_SIZE];
+      Udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);
+
+      if (strcmp(packetBuffer, "hello") == 0) {
+        Serial.println("Otrzymano 'hello' od serwera.");
+        sendResponseString("ACK: Hello from pracownik");
+        Serial.println("Połączono z serwerem");
+        break;
+      }
+    }
+  }
+}
+
+void sendResponseString(const char *message) {
+    Udp.beginPacket(serverIP, serverPort);
+    Udp.write(message);
+    Udp.endPacket();
+}
+
+int mulitplyBy2(int x) {
+  return x*2;
+}
+
+int divideBy2(int x) {
+  return x/2;
+}
+
+int add2(int x) {
+  return x+2;
+}
+
+int subtract2(int x) {
+  return x-2;
+}
+
+bool checkIfEven(int x) {
+  if (x%2 == 0) {
+    return true;
+  }
+
+  else {
+    return false;
+  }
+}
+
+bool checkIfPierwsza(int x) {
+  if(x<2)
+		return false;
+		
+	for(int i=2;i*i<=x;i++)
+		if(x%i==0)
+			return false;
+
+	return true;
+}
+
 void setup() {
   Serial.begin(9600);
   while (!Serial) {
@@ -82,63 +142,4 @@ void loop() {
   Udp.write(numberStr);
   Udp.endPacket();
 }
-
-void waitForHello() {
-  while (true) {
-    int packetSize = Udp.parsePacket();
-    if (packetSize) {
-      char packetBuffer[UDP_TX_PACKET_MAX_SIZE];
-      Udp.read(packetBuffer, UDP_TX_PACKET_MAX_SIZE);
-
-      if (strcmp(packetBuffer, "hello") == 0) {
-        Serial.println("Otrzymano 'hello' od serwera.");
-        sendResponseString("ACK: Hello from pracownik");
-        Serial.println("Połączono z serwerem");
-        break;
-      }
-    }
-  }
-}
-
-void sendResponseString(const char *message) {
-    Udp.beginPacket(serverIP, serverPort);
-    Udp.write(message);
-    Udp.endPacket();
-}
-
-int mulitplyBy2(int x) {
-  return x*2;
-}
-
-int divideBy2(int x) {
-  return x/2;
-}
-
-int add2(int x) {
-  return x+2;
-}
-
-int subtract2(int x) {
-  return x-2;
-}
-
-bool checkIfEven(int x) {
-  if (x%2 == 0) {
-    return true;
-  }
-
-  else {
-    return false;
-  }
-}
-
-bool checkIfPierwsza(int x) {
-  if(x<2)
-		return false;
-		
-	for(int i=2;i*i<=x;i++)
-		if(x%i==0)
-			return false;
-
-	return true;
 }
