@@ -124,9 +124,11 @@ int main() {
 
         // Odpowiedź serwera
         // Przesyłanie ciągu znaków
-        const char* message = "1";
-        sendto(server_socket, message, strlen(message), 0, (struct sockaddr *)&client_addr, sizeof(client_addr));
-
+        int number = 1;
+        char numberStr[10];
+        sprintf(numberStr, "%d", number);
+        sendto(server_socket, numberStr, strlen(numberStr), 0, (struct sockaddr *)&client_addr, sizeof(client_addr));
+        
         // Przesyłanie liczby
         int number = 8;
         char numberStr[10];
