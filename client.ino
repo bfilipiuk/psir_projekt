@@ -136,10 +136,10 @@ void loop() {
       break;
   // Odesłanie wyników
 
-  char numberStr[10];
-  sprintf(numberStr, "%d", result);
-  Udp.beginPacket(serverIP, serverPort);
-  Udp.write(numberStr);
-  Udp.endPacket();
-}
+    char numberStr[10];
+    sprintf(numberStr, "%d", result);
+    Udp.beginPacket(serverIP, serverPort);
+    Udp.write(numberStr);
+    Udp.endPacket();
+  }
 }

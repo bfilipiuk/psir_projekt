@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <stdbool.h>
+#include <time.h>
 
 #define BUF_SIZE 1024
 #define SERVER_PORT 12345
@@ -17,6 +18,9 @@ struct client_info {
 };
 
 int main() {
+    int number;
+    char numberStr[10];
+
     int server_socket;
     struct sockaddr_in server_addr, client_addr;
     char buffer[BUF_SIZE];
@@ -124,14 +128,12 @@ int main() {
 
         // Odpowiedź serwera
         // Przesyłanie ciągu znaków
-        int number = 1;
-        char numberStr[10];
+        number = 1;
         sprintf(numberStr, "%d", number);
         sendto(server_socket, numberStr, strlen(numberStr), 0, (struct sockaddr *)&client_addr, sizeof(client_addr));
-        
+
         // Przesyłanie liczby
-        int number = 8;
-        char numberStr[10];
+        number = 8;
         sprintf(numberStr, "%d", number);
         sendto(server_socket, numberStr, strlen(numberStr), 0, (struct sockaddr *)&client_addr, sizeof(client_addr));
 
@@ -147,7 +149,7 @@ int main() {
             }
         }
         printf("Wynik: %s\n", buffer);
-
+    }
     close(server_socket);
     return 0;
 }
