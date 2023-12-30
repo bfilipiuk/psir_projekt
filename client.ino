@@ -3,7 +3,7 @@
 #include <EthernetUdp.h>
 
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-IPAddress serverIP(192, 168, 1, 100);
+IPAddress serverIP(192, 168, 10, 204);
 unsigned int serverPort = 12345;      
 unsigned int localPort = 54321;    
 
@@ -27,57 +27,60 @@ void setup() {
 }
 
 void loop() {
-  char stringMessage[UDP_TX_PACKET_MAX_SIZE];
+  char taskMessage[UDP_TX_PACKET_MAX_SIZE];
   char numberMessage[UDP_TX_PACKET_MAX_SIZE];
 
   int result;
+  int task;
+  int number;
 
   // Zapytanie o zadanie
   Udp.beginPacket(serverIP, serverPort);
   Udp.write("Czekam na zadanie");
-  Udp.endPacket;
+  Udp.endPacket();
 
   // Odbiór ciągu znaków
   int packetSize = Udp.parsePacket();
+
   if (packetSize) {
-    Udp.read(stringMessage, UDP_TX_PACKET_MAX_SIZE);
-    stringMessage[packetSize] = 0; // Dodanie znaku końca ciągu
-    Serial.print("Otrzymano ciąg znaków: ");
-    Serial.println(stringMessage);
+    Udp.read(taskMessage, UDP_TX_PACKET_MAX_SIZE);
+    taskMessage[packetSize] = 0; // Dodanie znaku końca ciągu
+    task = atoi(taskMessage);
+    Serial.print("Otrzymano zadanie: ");
+    Serial.println(task);
   }
+
+  // if (packetSize) {
+  //   Udp.read(stringMessage, UDP_TX_PACKET_MAX_SIZE);
+  //   stringMessage[packetSize] = 0; // Dodanie znaku końca ciągu
+  //   Serial.print("Otrzymano ciąg znaków: ");
+  //   Serial.println(stringMessage);
+  // }
 
   // Oczekiwanie na liczbę
   packetSize = Udp.parsePacket();
   if (packetSize) {
     Udp.read(numberMessage, UDP_TX_PACKET_MAX_SIZE);
     numberMessage[packetSize] = 0; // Dodanie znaku końca ciągu
-    int number = atoi(numberMessage);
+    number = atoi(numberMessage);
     Serial.print("Otrzymano liczbę: ");
     Serial.println(number);
   }
 
-  switch (stringMessage) {
-    case mulitplyBy2:
+  switch (task) {
+    case 1:
       result = mulitplyBy2(number);
       break;
-    case divideBy2:
+    case 2:
       result = divideBy2(number);
       break;
-    case add2:
-      result = add2(number);
-      break;
-    case subtract2:
-      result = subtract2(number);
-      break;
-  }
-
   // Odesłanie wyników
 
   char numberStr[10];
   sprintf(numberStr, "%d", result);
   Udp.beginPacket(serverIP, serverPort);
   Udp.write(numberStr);
-  Udp.endPacket;
+  Udp.endPacket();
 }
 
 void waitForHello() {
@@ -90,7 +93,7 @@ void waitForHello() {
       if (strcmp(packetBuffer, "hello") == 0) {
         Serial.println("Otrzymano 'hello' od serwera.");
         sendResponseString("ACK: Hello from pracownik");
-        Serial.println("Połączono z serwerem")
+        Serial.println("Połączono z serwerem");
         break;
       }
     }

@@ -7,7 +7,7 @@
 
 #define BUF_SIZE 1024
 #define SERVER_PORT 12345
-#define CLIENTS_COUNT 3
+#define CLIENTS_COUNT 1
 #define HELLO_INTERVAL 5
 
 struct client_info {
@@ -23,9 +23,9 @@ int main() {
     socklen_t client_addr_size;
 
     struct client_info clients[CLIENTS_COUNT] = {
-        {"192.168.1.101", 54321, false},
-        {"192.168.1.102", 54322, false},
-        {"192.168.1.103", 54323, false}
+        {"192.168.10.202", 54321, false},
+        // {"192.168.1.102", 54322, false},
+        // {"192.168.1.103", 54323, false}
     };
 
     server_socket = socket(PF_INET, SOCK_DGRAM, 0);
@@ -124,7 +124,7 @@ int main() {
 
         // Odpowiedź serwera
         // Przesyłanie ciągu znaków
-        const char* message = "multiplyBy2";
+        const char* message = "1";
         sendto(server_socket, message, strlen(message), 0, (struct sockaddr *)&client_addr, sizeof(client_addr));
 
         // Przesyłanie liczby
