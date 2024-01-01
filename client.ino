@@ -159,4 +159,5 @@ void loop() {
     Serial.println("Nie otrzymano zadania");
     return; // Przerwanie pętli, ponieważ nie otrzymano zadania
   }
+  delay(3000);
 }
