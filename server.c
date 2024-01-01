@@ -105,51 +105,28 @@ int main() {
     // Główna pętla komunikacji
     while (1) {
         client_addr_size = sizeof(client_addr);
-        ssize_t recv_len = -1;
+        ssize_t recv_len = recvfrom(server_socket, buffer, BUF_SIZE, 0, (struct sockaddr *)&client_addr, &client_addr_size);
 
-        while (recv_len == -1) {
+        if (recv_len > 0) {
+            buffer[recv_len] = '\0';
+            printf("Odebrano od klienta: %s\n", buffer);
+
+            // Wysłanie zadania i liczby do klienta
+            const char* task = "1";
+            sendto(server_socket, task, strlen(task), 0, (struct sockaddr *)&client_addr, sizeof(client_addr));
+            const char* number = "8";
+            sendto(server_socket, number, strlen(number), 0, (struct sockaddr *)&client_addr, sizeof(client_addr));
+
+            // Oczekiwanie na wynik
             recv_len = recvfrom(server_socket, buffer, BUF_SIZE, 0, (struct sockaddr *)&client_addr, &client_addr_size);
-
-            if (recv_len == -1) {
-                perror("recvfrom failed");
-                sleep(100);
-            }
-    }
-
-        buffer[recv_len] = '\0';
-        char client_ip[INET_ADDRSTRLEN];
-        inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
-        int client_port = ntohs(client_addr.sin_port);
-
-        // Otrzymana wiadomość od klienta czy robota
-        printf("Received message from %s:%d: %s\n", client_ip, client_port, buffer);
-
-        //dodac warunki
-
-        // Odpowiedź serwera
-        // Przesyłanie ciągu znaków
-        number = 1;
-        sprintf(numberStr, "%d", number);
-        sendto(server_socket, numberStr, strlen(numberStr), 0, (struct sockaddr *)&client_addr, sizeof(client_addr));
-
-        // Przesyłanie liczby
-        number = 8;
-        sprintf(numberStr, "%d", number);
-        sendto(server_socket, numberStr, strlen(numberStr), 0, (struct sockaddr *)&client_addr, sizeof(client_addr));
-
-        //dodać czekanie na odpowiedź z wynikiem :)
-        recv_len = -1;
-
-        while (recv_len == -1) {
-            recv_len = recvfrom(server_socket, buffer, BUF_SIZE, 0, (struct sockaddr *)&client_addr, &client_addr_size);
-
-            if (recv_len == -1) {
-                perror("result recvfrom failed");
-                sleep(100);
+            if (recv_len > 0) {
+                buffer[recv_len] = '\0';
+                printf("Wynik od klienta: %s\n", buffer);
             }
         }
-        printf("Wynik: %s\n", buffer);
+        sleep(5000);
     }
+
     close(server_socket);
     return 0;
 }
