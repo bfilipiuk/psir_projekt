@@ -1,13 +1,22 @@
-#include <SPI.h>
-#include <Ethernet.h>
-#include <EthernetUdp.h>
+#include <Zsut.h>
+#include <ZsutClient.h>
+#include <ZsutDhcp.h>
+#include <ZsutDns.h>
+#include <ZsutEthernet.h>
+#include <ZsutEthernetClient.h>
+#include <ZsutEthernetServer.h>
+#include <ZsutEthernetUdp.h>
+#include <ZsutFeatures.h>
+#include <ZsutIPAddress.h>
+#include <ZsutUdp.h>
 
-byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-IPAddress serverIP(192, 168, 10, 204);
+byte mac[] = {0xAD, 0xDE, 0xBE, 0xEF, 0xFE, 0x34};
+ZsutIPAddress clientIP(192, 168, 10, 202);
+ZsutIPAddress serverIP(192, 168, 10, 204);
 unsigned int serverPort = 12345;      
 unsigned int localPort = 54321;    
 
-EthernetUDP Udp;
+ZsutEthernetUDP Udp;
 
 void waitForHello() {
   while (true) {
@@ -80,6 +89,8 @@ void setup() {
     for (;;)
       ;
   }
+
+  ZsutEthernet.begin(mac, clientIP);
   Udp.begin(localPort);
 
   Serial.println("Czekam na wiadomość 'hello' od serwera...");
@@ -99,7 +110,7 @@ void loop() {
   Udp.write("Czekam na zadanie");
   Udp.endPacket();
 
-  // Odbiór ciągu znaków
+  // Odbiór taska
   int packetSize = Udp.parsePacket();
 
   if (packetSize) {
