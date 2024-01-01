@@ -10,7 +10,7 @@
 #include <ZsutIPAddress.h>
 #include <ZsutUdp.h>
 
-byte mac[] = {0xAD, 0xDE, 0xBE, 0xEF, 0xFE, 0x34};
+byte mac[] = {0x08, 0x00, 0x27, 0x13, 0x93, 0xEE};
 ZsutIPAddress clientIP(192, 168, 10, 202);
 ZsutIPAddress serverIP(192, 168, 10, 204);
 unsigned int serverPort = 12345;      
@@ -84,11 +84,11 @@ void setup() {
     ;
   }
 
-  if (Ethernet.begin(mac) == 0) {
-    Serial.println("Nie udało się skonfigurować Ethernetu za pomocą DHCP");
-    for (;;)
-      ;
-  }
+  // if (ZsutEthernet.begin(mac) == 0) {
+  //   Serial.println("Nie udało się skonfigurować Ethernetu za pomocą DHCP");
+  //   for (;;)
+  //     ;
+  // }
 
   ZsutEthernet.begin(mac, clientIP);
   Udp.begin(localPort);
@@ -145,6 +145,7 @@ void loop() {
     case 2:
       result = divideBy2(number);
       break;
+  }
   // Odesłanie wyników
 
     char numberStr[10];
@@ -152,5 +153,6 @@ void loop() {
     Udp.beginPacket(serverIP, serverPort);
     Udp.write(numberStr);
     Udp.endPacket();
-  }
+
+  delay(5000);
 }
