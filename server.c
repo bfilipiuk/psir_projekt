@@ -118,13 +118,14 @@ int main() {
             sendto(server_socket, number, strlen(number), 0, (struct sockaddr *)&client_addr, sizeof(client_addr));
 
             // Oczekiwanie na wynik
+            sleep(1);
             recv_len = recvfrom(server_socket, buffer, BUF_SIZE, 0, (struct sockaddr *)&client_addr, &client_addr_size);
             if (recv_len > 0) {
                 buffer[recv_len] = '\0';
                 printf("Wynik od klienta: %s\n", buffer);
             }
         }
-        sleep(5000);
+        sleep(1);
     }
 
     close(server_socket);

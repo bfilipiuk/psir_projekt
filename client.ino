@@ -120,6 +120,7 @@ void loop() {
     Serial.println(task);
 
     // Oczekiwanie na liczbę
+    delay(100);
     packetSize = Udp.parsePacket();
     if (packetSize) {
       Udp.read(numberMessage, UDP_TX_PACKET_MAX_SIZE);
@@ -137,7 +138,7 @@ void loop() {
           result = divideBy2(number);
           break;
         default:
-          Serial.println("Nieznane zadanie")
+          Serial.println("Nieznane zadanie");
           return;
       }
 
