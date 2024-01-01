@@ -117,12 +117,19 @@ int main() {
             const char* number = "8";
             sendto(server_socket, number, strlen(number), 0, (struct sockaddr *)&client_addr, sizeof(client_addr));
 
-            // Oczekiwanie na wynik
-            sleep(1);
+            
+            // Oczekiwanie na potwierdzenie odbioru
             recv_len = recvfrom(server_socket, buffer, BUF_SIZE, 0, (struct sockaddr *)&client_addr, &client_addr_size);
             if (recv_len > 0) {
                 buffer[recv_len] = '\0';
-                printf("Wynik od klienta: %s\n", buffer);
+                printf("Potwierdzenie odbioru od klienta: %s\n", buffer);
+
+                // Oczekiwanie na wynik
+                recv_len = recvfrom(server_socket, buffer, BUF_SIZE, 0, (struct sockaddr *)&client_addr, &client_addr_size);
+                if (recv_len > 0) {
+                    buffer[recv_len] = '\0';
+                    printf("Wynik od klienta: %s\n", buffer);
+                }
             }
         }
         sleep(1);

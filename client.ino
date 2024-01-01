@@ -129,6 +129,12 @@ void loop() {
       Serial.print("Otrzymano liczbe: ");
       Serial.println(number);
 
+      // Wysłanie potwierdzenia odbioru
+      char confirmMsg[] = "Zadanie odebrane";
+      Udp.beginPacket(serverIP, serverPort);
+      Udp.write(confirmMsg);
+      Udp.endPacket();
+
       // Obliczenia
       switch (task) {
         case 1:
