@@ -14,6 +14,52 @@
 field_t tuples[MAX_TUPLES][2]; // Każda krotka składa się z 2 pól
 int tupleCount = 0;
 
+int deserializePacket(char* packet, int* command, char* tuple_name, field_t* fields, int* num_fields) {
+    int total_packet_size = 0;
+
+    // Extract flags_combined byte
+    unsigned char flags_combined = packet[total_packet_size++];
+    // Extract tuple_name length
+    int tuple_name_length = packet[total_packet_size++];
+    // Extract tuple_name
+    for (int i = 0; i < tuple_name_length; ++i) {
+        tuple_name[i] = packet[total_packet_size++];
+    }
+    tuple_name[tuple_name_length] = '\0'; // Null-terminate the string
+
+    // Reconstruct command and num_fields from flags_combined
+    *command = ((flags_combined >> 1) & 1) << 1 | (flags_combined & 1);
+    *num_fields = getBit(packet[0], NUM_FIELDS_POS)+1;
+
+    // Extract fields
+    int bit_pos = 4;
+    for (int i = 0; i <= *num_fields; i++)
+    {
+        fields[i].is_actual = packet[0] >> (sizeof(char) * 8 - bit_pos++) & 1;
+        fields[i].type = packet[0] >> (sizeof(char) * 8 - bit_pos++) & 1;
+
+        if (fields[i].is_actual == TS_YES) {
+            if (fields[i].type == TS_INT) {
+                // Assuming sizeof(int) is 4 bytes
+                fields[i].data.int_field = bytesToInt(
+                    packet[total_packet_size++],
+                    packet[total_packet_size++],
+                    packet[total_packet_size++],
+                    packet[total_packet_size++]
+                );
+            } else if (fields[i].type == TS_FLOAT) {
+                // Assuming sizeof(float) is 4 bytes
+                fields[i].data.float_field = bytesToFloat(packet[total_packet_size++], 
+                                                            packet[total_packet_size++], 
+                                                            packet[total_packet_size++], 
+                                                            packet[total_packet_size++]);
+            }
+        }
+    }
+
+    return total_packet_size;
+}
+
 int main() {
     int sockfd;
     struct sockaddr_in serverAddr, clientAddr;

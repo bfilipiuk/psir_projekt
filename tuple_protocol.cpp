@@ -162,9 +162,9 @@ int ts_out(char* tuple_name, field_t* fields, int num_fields) {
     unsigned char packet[1024];
     memset(packet, 0, sizeof(packet));
 
-    int total_packet_size = serializePacket(packet, TS_CMD_OUT, tuple_name, fields, num_fields);
+    // int total_packet_size = serializePacket(packet, TS_CMD_OUT, tuple_name, fields, num_fields);
 
-    displayProtocolBytes(packet, total_packet_size, strlen(tuple_name));
+    // displayProtocolBytes(packet, total_packet_size, strlen(tuple_name));
     
     return TS_SUCCESS;
 }
@@ -174,17 +174,17 @@ int ts_inp(char* tuple_name, field_t* fields, int num_fields) {
     unsigned char packet[1024];
     memset(packet, 0, sizeof(packet));
 
-    int total_packet_size = serializePacket(packet, TS_CMD_IN, tuple_name, fields, num_fields);
+    // int total_packet_size = serializePacket(packet, TS_CMD_IN, tuple_name, fields, num_fields);
 
     //displayProtocolBytes(packet, total_packet_size, strlen(tuple_name));
     
-    memset(packet, 0, sizeof(packet));
+    // memset(packet, 0, sizeof(packet));
     
-    //displayProtocolBytes(packet, total_packet_size_rec, packet[1]);
-    int command;
-    unsigned char tuple_name_rec[32];
-    int num_fields_rec;
-    total_packet_size_rec = deserializePacket(packet, &command, tuple_name_rec, fields, &num_fields_rec);
+    // //displayProtocolBytes(packet, total_packet_size_rec, packet[1]);
+    // int command;
+    // unsigned char tuple_name_rec[32];
+    // int num_fields_rec;
+    // // total_packet_size_rec = deserializePacket(packet, &command, tuple_name_rec, fields, &num_fields_rec);
 
     return TS_SUCCESS;
 }
@@ -194,7 +194,7 @@ int ts_rdp(char* tuple_name, field_t* fields, int num_fields) {
     unsigned char packet[1024];
     memset(packet, 0, sizeof(packet));
 
-    int total_packet_size = serializePacket(packet, TS_CMD_RD, tuple_name, fields, num_fields);
+    // int total_packet_size = serializePacket(packet, TS_CMD_RD, tuple_name, fields, num_fields);
 
     //displayProtocolBytes(packet, total_packet_size, strlen(tuple_name));
     
@@ -208,7 +208,7 @@ int ts_rdp(char* tuple_name, field_t* fields, int num_fields) {
     int command;
     unsigned char tuple_name_rec[32];
     int num_fields_rec;
-    total_packet_size_rec = deserializePacket(packet, &command, tuple_name_rec, fields, &num_fields_rec);
+    // total_packet_size_rec = deserializePacket(packet, &command, tuple_name_rec, fields, &num_fields_rec);
 
     return TS_SUCCESS;
 }
