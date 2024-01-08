@@ -1,3 +1,7 @@
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef TUPLE_PROTOCOL_H
 #define TUPLE_PROTOCOL_H
 #include <stdint.h>
@@ -58,4 +62,8 @@ int bytesToInt(unsigned char byte1, unsigned char byte2, unsigned char byte3, un
 float bytesToFloat(unsigned char byte1, unsigned char byte2, unsigned char byte3, unsigned char byte4);
 
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif
