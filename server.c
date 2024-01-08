@@ -1,64 +1,72 @@
+#include "tuple_protocol.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 #include <arpa/inet.h>
 
-#define PORT 12345
+#define SERVER_PORT 12345
 #define BUFFER_SIZE 1024
+#define MAX_TUPLES 10
 
-int is_prime(int number) {
-    if (number <= 1) return 0;
-    for (int i = 2; i * i <= number; i++) {
-        if (number % i == 0) return 0;
-    }
-    return 1;
-}
+// Definicja tablicy krotek
+field_t tuples[MAX_TUPLES][2]; // Każda krotka składa się z 2 pól
+int tupleCount = 0;
 
 int main() {
     int sockfd;
-    struct sockaddr_in server_addr, client_addr;
+    struct sockaddr_in serverAddr, clientAddr;
     char buffer[BUFFER_SIZE];
     socklen_t addr_size;
-    int num;
+    field_t fields[2]; // Przyjmujemy, że każda krotka ma 2 pola
 
     // Utworzenie gniazda UDP
-    sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+    sockfd = socket(PF_INET, SOCK_DGRAM, 0);
     if (sockfd < 0) {
         perror("Błąd przy tworzeniu gniazda");
         exit(EXIT_FAILURE);
     }
 
     // Konfiguracja adresu serwera
-    memset(&server_addr, 0, sizeof(server_addr));
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(PORT);
-    server_addr.sin_addr.s_addr = INADDR_ANY;
+    memset(&serverAddr, 0, sizeof(serverAddr));
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(SERVER_PORT);
+    serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
     // Przypisanie adresu do gniazda
-    if (bind(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
+    if (bind(sockfd, (struct sockaddr *) &serverAddr, sizeof(serverAddr)) < 0) {
         perror("Błąd przy przypisywaniu adresu do gniazda");
         exit(EXIT_FAILURE);
     }
 
-    printf("Serwer UDP uruchomiony na porcie %d\n", PORT);
+    printf("Serwer UDP uruchomiony na porcie %d.\n", SERVER_PORT);
 
     while (1) {
-        addr_size = sizeof(client_addr);
-        // Odbiór danych od klienta
-        recvfrom(sockfd, buffer, BUFFER_SIZE, 0, (struct sockaddr *)&client_addr, &addr_size);
+        addr_size = sizeof(clientAddr);
+        int recv_len = recvfrom(sockfd, buffer, BUFFER_SIZE, 0, (struct sockaddr *) &clientAddr, &addr_size);
+        if (recv_len > 0) {
+            buffer[recv_len] = '\0';
 
-        num = atoi(buffer);
-        printf("Otrzymano liczbę: %d\n", num);
+            int command, num_fields;
+            char tuple_name[32];
+            deserializePacket(buffer, &command, tuple_name, fields, &num_fields);
 
-        // Sprawdzenie, czy liczba jest pierwsza
-        sprintf(buffer, "%d jest %s\n", num, is_prime(num) ? "pierwsza" : "nie pierwsza");
+            // Dodanie krotki do tablicy
+            if (tupleCount < MAX_TUPLES) {
+                tuples[tupleCount][0] = fields[0]; // Pierwsze pole
+                tuples[tupleCount][1] = fields[1]; // Drugie pole
+                tupleCount++;
+            } else {
+                printf("Brak miejsca dla nowych krotek.\n");
+            }
 
-        // Wysłanie odpowiedzi do klienta
-        sendto(sockfd, buffer, strlen(buffer), 0, (struct sockaddr *)&client_addr, addr_size);
+            // Wyświetlanie krotek
+            for (int i = 0; i < tupleCount; i++) {
+                printf("Krotka %d: Zadanie %d, Liczba %d\n", i, tuples[i][0].data.int_field, tuples[i][1].data.int_field);
+            }
+        }
     }
 
-    close(sockfd);
     return 0;
 }
-
