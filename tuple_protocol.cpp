@@ -149,6 +149,16 @@ int deserializePacket(char* packet, int* command, char* tuple_name, field_t* fie
     return total_packet_size;
 }
 
+void initializeTuple(field_t *fields, int task, int number) {
+    fields[0].is_actual = TS_YES;
+    fields[0].type = TS_INT;
+    fields[0].data.int_field = task; // Zadanie przekazane jako argument
+
+    fields[1].is_actual = TS_YES;
+    fields[1].type = TS_INT;
+    fields[1].data.int_field = number; // Liczba przekazana jako argument
+}
+
 void displayProtocolBytes(unsigned char *packet, int total_packet_size, int tuple_name_len) {
     for (int i = 0; i < total_packet_size; i++) {
         printf("%02x ", packet[i]);

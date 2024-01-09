@@ -31,6 +31,17 @@ typedef struct {
 /* these functions return TS_SUCCESS or TS_FAILURE */
 /* parameters : tuple name , other fields , no. of other fields */
 
+#define COMMAND_TYPE_MASK   0x03
+#define COMMAND_TYPE_POS    (sizeof(char) * 8 - 2)
+#define NUM_FIELDS_POS      (sizeof(char) * 8 - 3)
+#define FIELD_1_ACTUAL_POS  (sizeof(char) * 8 - 4)
+#define FIELD_1_TYPE_POS    (sizeof(char) * 8 - 5)
+#define FIELD_2_ACTUAL_POS  (sizeof(char) * 8 - 6)
+#define FIELD_2_TYPE_POS    (sizeof(char) * 8 - 7)
+
+// this function creates tuple with two fields
+void initializeTuple(field_t *fields, int task, int number);
+
 // this function should adds a tuple with specified fields to the tuple space
 int ts_out (char*, field_t *, int);
 
@@ -40,25 +51,28 @@ int ts_inp (char*, field_t *, int);
 // this function should retrieve a tuple matching the specified fields from the tuple space and without deleting it
 int ts_rdp (char*, field_t *, int);
 
-#define COMMAND_TYPE_MASK   0x03
-#define COMMAND_TYPE_POS    (sizeof(char) * 8 - 2)
-#define NUM_FIELDS_POS      (sizeof(char) * 8 - 3)
-#define FIELD_1_ACTUAL_POS  (sizeof(char) * 8 - 4)
-#define FIELD_1_TYPE_POS    (sizeof(char) * 8 - 5)
-#define FIELD_2_ACTUAL_POS  (sizeof(char) * 8 - 6)
-#define FIELD_2_TYPE_POS    (sizeof(char) * 8 - 7)
-
+// this function serializes tuple so it can be send via UDP
 int serializePacket(char* packet, int command, char* tuple_name, field_t* fields, int num_fields);
 
+// this function deserializes tuple so it can be received with UDP
 int deserializePacket(char* packet, int* command, char* tuple_name, field_t* fields, int* num_fields);
 
+// changes int to bytes
 int intToBytes(uint32_t number, int index);
+
+// changes float to bytes
 int floatToBytes(float number, int index);
+
+// gets bit from given position
 int getBit(unsigned char byte, int position);
 
+// writes tuple
 void displayProtocolBytes(unsigned char *packet, int total_packet_size, int tuple_name_len);
 
+// changes bytes to int
 int bytesToInt(unsigned char byte1, unsigned char byte2, unsigned char byte3, unsigned char byte4);
+
+// changes bytes to float
 float bytesToFloat(unsigned char byte1, unsigned char byte2, unsigned char byte3, unsigned char byte4);
 
 

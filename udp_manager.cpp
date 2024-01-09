@@ -15,7 +15,7 @@ ZsutEthernetUDP udp;
 void udp_setup() {
     ZsutEthernet.begin(mac, localIP);
     delay(1500);
-    Serial.println("Połączono z siecią Ethernet");
+    Serial.println("Polaczono z siecia Ethernet");
     udp.begin(localPort);
 }
 

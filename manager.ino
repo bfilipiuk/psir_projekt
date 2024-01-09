@@ -3,6 +3,8 @@
 #include "tuple_protocol.h"
 #include "udp_manager.h"
 
+field_t tuple[2];
+
 // Konfiguracja sieci
 // byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 // ZsutIPAddress serverIP(192, 168, 0, 47); // Adres IP serwera
@@ -26,19 +28,29 @@ void setup() {
 }
 
 void loop() {
-  field_t fields[2];
-  fields[0].is_actual = TS_YES;
-  fields[0].type = TS_INT;
-  fields[0].data.int_field = 1; // Przykładowe zadanie
-  fields[1].is_actual = TS_YES;
-  fields[1].type = TS_INT;
-  fields[1].data.int_field = random(100); // Przykładowa liczba
+  // field_t fields[2];
+  // fields[0].is_actual = TS_YES;
+  // fields[0].type = TS_INT;
+  // fields[0].data.int_field = 1; // Przykładowe zadanie
+  // fields[1].is_actual = TS_YES;
+  // fields[1].type = TS_INT;
+  // fields[1].data.int_field = random(100); // Przykładowa liczba
 
-  int result = ts_out("example_tuple", fields, 2);
+  // initializing tuple
+
+  initializeTuple(tuple, 1, random(100));
+
+  // sending tuple to server (tuple_space)
+
+  int result = ts_out("example_tuple", tuple, 2);
     if (result == 1) {
-        Serial.println("Krotka wyslana pomyslnie");
+      Serial.print("Krotka wyslana pomyslnie: [");
+      Serial.print(tuple[0].data.int_field); // Zakładając, że field jest typu int
+      Serial.print(", ");
+      Serial.print(tuple[1].data.int_field); // Zakładając, że field jest typu int
+      Serial.println("]");
     } else {
-        Serial.println("Blad wysylania krotki");
+      Serial.println("Blad wysylania krotki");
     }
 
   // int result = ts_out(udp, serverIP, serverPort, "example_tuple", fields, 2);
