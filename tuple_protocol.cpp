@@ -1,4 +1,5 @@
 #include "tuple_protocol.h"
+#include "udp_manager.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -159,17 +160,19 @@ void displayProtocolBytes(unsigned char *packet, int total_packet_size, int tupl
 }
 
 int ts_out(char* tuple_name, field_t* fields, int num_fields) {
-    char packet[1024];
-    int packetSize = serializePacket(packet, TS_CMD_OUT, tuple_name, fields, num_fields);
+    unsigned char packet[1024];
+    int packetSize = serializePacket((char*)packet, TS_CMD_OUT, tuple_name, fields, num_fields);
+
+      if (packetSize > 0) {
+        return udp_send_packet(packet, packetSize);
+    }
+
+    return TS_FAILURE; // Zdefiniuj TS_FAILURE jako błąd, np. -1
 
     // udp.beginPacket(serverIP, serverPort);
     // int sent = udp.write(packet, packetSize);
     // udp.endPacket();
-
-    // return (sent == packetSize) ? TS_SUCCESS : TS_FAILURE;
-    return TS_SUCCESS;
 }
-
 
 /* Implementation of ts_inp function */
 int ts_inp(char* tuple_name, field_t* fields, int num_fields) {
