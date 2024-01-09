@@ -62,9 +62,18 @@ int main() {
             }
 
             // Wyświetlanie krotek
+            // for (int i = 0; i < tupleCount; i++) {
+            //     printf("Krotka %d: Zadanie %d, Liczba %d\n", i, tuples[i][0].data.int_field, tuples[i][1].data.int_field);
+            // }
+
+            printf("[");
             for (int i = 0; i < tupleCount; i++) {
-                printf("Krotka %d: Zadanie %d, Liczba %d\n", i, tuples[i][0].data.int_field, tuples[i][1].data.int_field);
+                printf("[%d, %d]", tuples[i][0].data.int_field, tuples[i][1].data.int_field);
+                if (i < tupleCount - 1) {
+                    printf(", ");
+                }
             }
+            printf("]\n");
         }
     }
 

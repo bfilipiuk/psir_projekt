@@ -4,9 +4,9 @@
 
 // Konfiguracja sieci
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-ZsutIPAddress serverIP(192, 168, 1, 2); // Adres IP serwera
+ZsutIPAddress serverIP(192, 168, 0, 47); // Adres IP serwera
 unsigned int serverPort = 12345;    // Port serwera
-ZsutIPAddress myIP(192, 168, 1, 177);   // Adres IP klienta
+ZsutIPAddress myIP(192, 168, 0, 241);   // Adres IP klienta
 
 ZsutEthernetUDP udp;
 

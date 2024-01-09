@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
 int intToBytes(uint32_t num, int index){
     int pos = (sizeof(uint32_t) - 1) * 8;
     pos -= index * 8;
@@ -158,16 +157,19 @@ void displayProtocolBytes(unsigned char *packet, int total_packet_size, int tupl
     }
     printf("\n");
 }
+
 int ts_out(char* tuple_name, field_t* fields, int num_fields) {
-    unsigned char packet[1024];
-    memset(packet, 0, sizeof(packet));
+    char packet[1024];
+    int packetSize = serializePacket(packet, TS_CMD_OUT, tuple_name, fields, num_fields);
 
-    // int total_packet_size = serializePacket(packet, TS_CMD_OUT, tuple_name, fields, num_fields);
+    // udp.beginPacket(serverIP, serverPort);
+    // int sent = udp.write(packet, packetSize);
+    // udp.endPacket();
 
-    // displayProtocolBytes(packet, total_packet_size, strlen(tuple_name));
-    
+    // return (sent == packetSize) ? TS_SUCCESS : TS_FAILURE;
     return TS_SUCCESS;
 }
+
 
 /* Implementation of ts_inp function */
 int ts_inp(char* tuple_name, field_t* fields, int num_fields) {
